@@ -17,6 +17,13 @@ Import-Module ./PowerShellAstSearch.psm1
 
 This tool uses the PowerShell Abstract Syntax Tree (AST) to parse scripts and discover symbols. It is robust for static analysis, but may not find symbols created dynamically at runtime or via dot-sourcing.
 
+## 🌀 Behind the Code
+
+This module was vibe-coded with AI.  
+I guided it, it wrote. Fast. Accurate. Useful.  
+
+If you're still debating prompt engineering vs. programming, this repo probably just outperformed your code review.
+
 # Contributing
 
 Contributions, bug reports, and feature requests are welcome! Please open an issue or submit a pull request.
