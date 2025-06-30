@@ -1,0 +1,1 @@
+. $PSScriptRoot\Public\Find-PowerShellSymbol.ps1
