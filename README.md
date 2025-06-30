@@ -5,6 +5,17 @@ Supercharge your PowerShell workflow! Quickly locate, audit, and analyze all you
 
 # Installation
 
+## Install from PowerShell Gallery
+
+You can install the latest version directly from the PowerShell Gallery:
+
+```powershell
+Install-Module PowerShellAstSearch -Scope CurrentUser
+```
+
+> **Note:** You may need to trust the PSGallery repository if prompted.
+
+
 Clone this repo or copy the module folder to your PowerShell module path. Then import the module:
 
 ```powershell
