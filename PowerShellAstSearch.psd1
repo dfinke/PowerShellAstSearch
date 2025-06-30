@@ -14,8 +14,11 @@
     # Company or vendor of this module
     CompanyName       = 'Doug Finke'
 
+    # Copyright statement
+    Copyright         = 'Copyright (c) 2025 Doug Finke. All rights reserved.'
+
     # Description of the functionality provided by this module
-    Description       = 'Search PowerShell files for function definitions and usages using AST.'
+    Description       = 'Search PowerShell files fast for function definitions, params, variables, using AST.'
 
     # Minimum version of the Windows PowerShell engine required by this module
     PowerShellVersion = '5.1'
@@ -34,6 +37,12 @@
     # Aliases to export from this module
     AliasesToExport   = @()
 
+   
     # Private data to pass to the module specified in RootModule
-    PrivateData       = @{}
+    PrivateData       = @{
+        ProjectUri = 'https://github.com/dfinke/PowerShellAstSearch'
+        LicenseUri = 'https://github.com/dfinke/PowerShellAstSearch/blob/main/LICENSE'
+        Tags       = @('PowerShell', 'AST', 'Search', 'Function', 'Definition', 'Params', 'Variables')
+        Category   = 'Development'
+    }
 }
