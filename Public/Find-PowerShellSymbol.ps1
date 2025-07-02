@@ -15,10 +15,13 @@ function Find-PowerShellSymbol {
     Search only for variables (usages).
 .PARAMETER ParamsOnly
     Search only for parameters (definitions/usages).
+.PARAMETER ArgumentsOnly
+    Search only for command arguments (e.g., -Name in Get-Process -Name 'foo').
 .EXAMPLE
     Find-PowerShellSymbol -SymbolName 'Get-Data' -Path .\*.ps1 -FunctionsOnly
     Find-PowerShellSymbol -SymbolName 'foo' -Path .\*.ps1 -VarsOnly
     dir .\src -Recurse -Filter *.ps1 | Find-PowerShellSymbol -SymbolName 'bar' -ParamsOnly
+    Find-PowerShellSymbol -SymbolName 'id' -Path .\*.ps1 -ArgumentsOnly  # Finds usages like Get-Data -id 3
 #>
     [CmdletBinding()]
     param(
@@ -39,15 +42,29 @@ function Find-PowerShellSymbol {
         [switch]$ParamsOnly,
 
         [Parameter()]
+        [switch]$ArgumentsOnly,
+
+        [Parameter()]
         [string]$DataType
     )
 
     begin {
         $results = @()
         $symbolPattern = if ($SymbolName) { [regex]::Escape($SymbolName) } else { ".*" }
-        $searchFunctions = -not $VarsOnly -and -not $ParamsOnly -or $FunctionsOnly
-        $searchVars = -not $FunctionsOnly -and -not $ParamsOnly -or $VarsOnly
-        $searchParams = -not $FunctionsOnly -and -not $VarsOnly -or $ParamsOnly
+        # Determine which types of symbols to search for
+        if ($FunctionsOnly -or $VarsOnly -or $ParamsOnly -or $ArgumentsOnly) {
+            $searchFunctions = $FunctionsOnly
+            $searchVars = $VarsOnly
+            $searchParams = $ParamsOnly
+            $searchArguments = $ArgumentsOnly
+        }
+        else {
+            # If no specific type is requested, search all
+            $searchFunctions = $true
+            $searchVars = $true
+            $searchParams = $true
+            $searchArguments = $true
+        }
     }
 
     process {
@@ -80,12 +97,19 @@ function Find-PowerShellSymbol {
             $lines = $content -split "`r?`n"
             $ast = [System.Management.Automation.Language.Parser]::ParseInput($content, [ref]$null, [ref]$null)
 
+            # Get all command invocations for searching functions and arguments
+            $calls = $ast.FindAll({
+                    param($node)
+                    $node -is [System.Management.Automation.Language.CommandAst] -and
+                    $node.CommandElements.Count -gt 0
+                }, $true)
+
             if ($searchFunctions) {
                 # Function Definitions
                 $defs = $ast.FindAll({
                         param($node)
                         $node -is [System.Management.Automation.Language.FunctionDefinitionAst] -and
-                        ($SymbolName -eq $null -or $node.Name -match $symbolPattern)
+                        ($null -eq $SymbolName -or $node.Name -match $symbolPattern)
                     }, $true)
                 foreach ($def in $defs) {
                     $lineNum = $def.Extent.StartLineNumber
@@ -100,21 +124,38 @@ function Find-PowerShellSymbol {
                 }
 
                 # Function Usages
-                $calls = $ast.FindAll({
-                        param($node)
-                        $node -is [System.Management.Automation.Language.CommandAst] -and
-                        $node.CommandElements.Count -gt 0 -and
-                        ($SymbolName -eq $null -or $node.CommandElements[0].Value -match $symbolPattern)
-                    }, $true)
                 foreach ($call in $calls) {
-                    $lineNum = $call.Extent.StartLineNumber
-                    $line = $lines[$lineNum - 1]
-                    $results += [PSCustomObject][Ordered]@{
-                        LineNumber = $lineNum
-                        Type       = 'FunctionUsage'
-                        Name       = $call.CommandElements[0].Value
-                        Line       = $line
-                        File       = $file
+                    if ($null -eq $SymbolName -or $call.CommandElements[0].Value -match $symbolPattern) {
+                        $lineNum = $call.Extent.StartLineNumber
+                        $line = $lines[$lineNum - 1]
+                        $results += [PSCustomObject][Ordered]@{
+                            LineNumber = $lineNum
+                            Type       = 'FunctionUsage'
+                            Name       = $call.CommandElements[0].Value
+                            Line       = $line
+                            File       = $file
+                        }                    
+                    }
+                }
+            }
+
+            # Search for arguments in commands
+            if ($searchArguments) {
+                foreach ($call in $calls) {
+                    $line = $lines[$call.Extent.StartLineNumber - 1]
+                    for ($i = 1; $i -lt $call.CommandElements.Count; $i++) {
+                        $element = $call.CommandElements[$i]
+                        if ($element -is [System.Management.Automation.Language.CommandParameterAst] -and
+                            ($null -eq $SymbolName -or $element.ParameterName -match $symbolPattern)) {
+                            $results += [PSCustomObject][Ordered]@{
+                                LineNumber = $element.Extent.StartLineNumber
+                                Type       = 'ArgumentUsage'
+                                Name       = $element.ParameterName
+                                Line       = $line
+                                File       = $file
+                                Command    = $call.CommandElements[0].Value
+                            }
+                        }
                     }
                 }
             }
@@ -124,7 +165,7 @@ function Find-PowerShellSymbol {
                 $params = $ast.FindAll({
                         param($node)
                         $node -is [System.Management.Automation.Language.ParameterAst] -and
-                        ($SymbolName -eq $null -or $node.Name.VariablePath.UserPath -match $symbolPattern)
+                        ($null -eq $SymbolName -or $node.Name.VariablePath.UserPath -match $symbolPattern)
                     }, $true)
                 foreach ($param in $params) {
                     $typeName = $null
@@ -159,7 +200,7 @@ function Find-PowerShellSymbol {
                 $vars = $ast.FindAll({
                         param($node)
                         $node -is [System.Management.Automation.Language.VariableExpressionAst] -and
-                        ($SymbolName -eq $null -or $node.VariablePath.UserPath -match $symbolPattern)
+                        ($null -eq $SymbolName -or $node.VariablePath.UserPath -match $symbolPattern)
                     }, $true)
                 foreach ($var in $vars) {
                     $typeName = $null
