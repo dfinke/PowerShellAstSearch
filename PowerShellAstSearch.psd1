@@ -3,7 +3,7 @@
     RootModule        = 'PowerShellAstSearch.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.1.1'
+    ModuleVersion     = '0.1.2'
 
     # ID used to uniquely identify this module
     GUID              = 'b1e2e2e2-0000-4000-8000-000000000001'
@@ -40,8 +40,7 @@
    
     # Private data to pass to the module specified in RootModule
     PrivateData       = @{
-        PSData = @{
-            
+        PSData = @{            
             ProjectUri = 'https://github.com/dfinke/PowerShellAstSearch'
             LicenseUri = 'https://github.com/dfinke/PowerShellAstSearch/blob/main/LICENSE'
             Tags       = @('PowerShell', 'AST', 'Search', 'Function', 'Definition', 'Params', 'Variables')

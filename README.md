@@ -73,68 +73,101 @@ For questions or support, open an issue on GitHub or contact the maintainer.
 
 ## Example Usage
 
-### 1. Passing in a file (search for a symbol by name)
+Here are common usage patterns to help you get started. Each example demonstrates a specific search capability of the tool.
+
+### Basic Search Operations
+
+#### 1. Search in a Single File
+Find any mention of 'Get-Data' in a specific script:
 ```powershell
 Find-PowerShellSymbol -SymbolName 'Get-Data' -Path .\Samples\Sample3.ps1
 ```
+This searches for functions, variables, parameters, and arguments named 'Get-Data' in the specified file.
 
-### 2. Piping in files (search all .ps1 files in a folder)
+#### 2. Search Multiple Files
+Search all PowerShell files in a directory for 'Get-Data':
 ```powershell
 dir .\Samples\ | Find-PowerShellSymbol -SymbolName 'Get-Data'
 ```
+Perfect for finding symbols across an entire project or module.
 
-### 3. Search for all symbols (no name filter)
+#### 3. List All Symbols
+Get a complete inventory of all symbols in a file:
 ```powershell
 Find-PowerShellSymbol -Path .\Samples\Sample3.ps1
 ```
+Useful for code review or understanding script structure.
 
-### 4. Functions only
+### Filtered Searches
+
+#### 4. Functions Only
+Find function definitions and calls for 'Get-Data':
 ```powershell
 Find-PowerShellSymbol -SymbolName 'Get-Data' -Path .\Samples\Sample3.ps1 -FunctionsOnly
 ```
+Shows where functions are defined and used, great for refactoring.
 
-### 5. Parameters only
+#### 5. Parameters Only
+Locate parameter definitions containing 'id':
 ```powershell
 Find-PowerShellSymbol -SymbolName 'id' -Path .\Samples\Sample3.ps1 -ParamsOnly
 ```
+Helps find parameter definitions in function declarations.
 
-### 6. Variables only
+#### 6. Variables Only
+Find variable usage of 'result':
 ```powershell
 Find-PowerShellSymbol -SymbolName 'result' -Path .\Samples\Sample3.ps1 -VarsOnly
 ```
+Track where variables are used throughout your code.
 
-### 7. By data type (parameters and variables)
+#### 7. Command Arguments Only
+Find where 'id' is used as a parameter in commands:
+```powershell
+Find-PowerShellSymbol -SymbolName 'id' -Path .\Samples\Sample3.ps1 -ArgumentsOnly
+```
+Useful for finding how commands are invoked with specific parameters (e.g., Get-Data -id 3).
+
+### Type-Based Searches
+
+#### 8. All String Types
+Find parameters and variables of type string:
 ```powershell
 Find-PowerShellSymbol -DataType string -Path .\Samples\Sample3.ps1
 ```
+Helpful for type-based refactoring or validation.
 
-### 8. Parameters only by data type
+#### 9. Integer Parameters
+Locate all integer parameters:
 ```powershell
 Find-PowerShellSymbol -DataType int -ParamsOnly -Path .\Samples\Sample3.ps1
 ```
+Great for finding numeric parameters that might need validation.
 
-### 9. Variables only by data type
+#### 10. Object Variables
+Find variables that handle complex objects:
 ```powershell
 Find-PowerShellSymbol -DataType object -VarsOnly -Path .\Samples\Sample3.ps1
 ```
+Useful for tracking object handling in your code.
 
-### 10. Only by data type (all parameters and variables of a type, no name filter)
-```powershell
-Find-PowerShellSymbol -DataType string -Path .\Samples\Sample3.ps1
-```
+### Advanced Usage
 
-### 11. Piping in files and searching by data type
+#### 11. Project-Wide Type Search
+Search all files in a project for object-typed symbols:
 ```powershell
 dir .\Samples\ | Find-PowerShellSymbol -DataType object
 ```
+Perfect for large-scale refactoring or code analysis.
 
 ## Output
 Returns an array of PSObjects with:
 - `File`: File path
 - `LineNumber`: Line number in the file
-- `Type`: Symbol type (FunctionDefinition, FunctionUsage, Parameter, Variable)
+- `Type`: Symbol type (FunctionDefinition, FunctionUsage, Parameter, Variable, ArgumentUsage)
 - `Name`: Symbol name
-- `DataType`: Data type (if available)
+- `DataType`: Data type (if available, for parameters and variables)
+- `Command`: Command name (for ArgumentUsage type)
 - `Line`: The line content
 
 ## Requirements
