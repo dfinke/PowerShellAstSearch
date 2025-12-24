@@ -1,6 +1,17 @@
 # PowerShell AST Search - Changelog
 
-## [0.1.1] - Previous Release
+## v0.1.3
+
+### Added
+- **Call Graph Generation**: New functions `New-PowerShellCallGraph` and `Convert-PowerShellCallGraphToMermaid` to analyze PowerShell scripts and generate visual call graphs using Mermaid syntax.
+  - `New-PowerShellCallGraph`: Creates a call graph from `Find-PowerShellSymbol` results, identifying function relationships and dependencies.
+  - `Convert-PowerShellCallGraphToMermaid`: Converts call graphs to Mermaid flowchart syntax for visualization, with options to filter included/excluded functions and save to markdown files.
+- **Enhanced Visualization**: Support for generating interactive flowcharts showing function call hierarchies, aiding in code documentation, debugging, and refactoring.
+
+### Enhanced
+- **Integration with Existing Features**: Call graph functions work seamlessly with `Find-PowerShellSymbol` output, extending symbol search capabilities to dependency analysis.
+
+## v0.1.2
 
 ### Added
 - **New ArgumentsOnly parameter**: Added `-ArgumentsOnly` switch to search specifically for command arguments (e.g., `-Name` in `Get-Process -Name 'foo'`)
@@ -21,6 +32,3 @@
 - Refactored AST parsing logic to be more efficient
 - Improved code readability with better variable naming and structure
 - Enhanced type checking and null handling patterns
-
-## [0.1.1] - Previous Release
-- Initial stable release with function, parameter, and variable search capabilities

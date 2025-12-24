@@ -78,6 +78,8 @@ function Find-PowerShellSymbol {
                     $files += Get-ChildItem -Path $p -Recurse -Filter *.ps1 -File | ForEach-Object { $_.FullName }
                 }
                 else {
+                    # Path doesn't exist - warn user but continue
+                    Write-Warning "Path '$p' does not exist. Skipping this path and continuing with other paths."
                     $files += Get-ChildItem -Path $p -Recurse -Filter *.ps1 -File -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }
                 }
             }
@@ -89,7 +91,10 @@ function Find-PowerShellSymbol {
 
         foreach ($file in $files) {
             if (-not ($file -match '\.ps1$')) { continue }
-            if (-not (Test-Path $file)) { continue }
+            if (-not (Test-Path $file)) { 
+                Write-Warning "File '$file' does not exist or is not accessible. Skipping this file and continuing."
+                continue 
+            }
             try {
                 $content = Get-Content $file -Raw -ErrorAction Stop
             }
