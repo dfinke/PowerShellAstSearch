@@ -1,7 +1,7 @@
 
-# PowerShellAstSearch: Instantly Find Functions, Parameters, and Variables in Your Scripts
+# PowerShellAstSearch: Instantly Find Functions, Parameters, and Variables in Your Scripts, and Generate Call Graphs
 
-Supercharge your PowerShell workflow! Quickly locate, audit, and analyze all your functions, parameters, and variables—by name or data type—across any number of scripts. Perfect for code navigation, refactoring, and automation.
+Supercharge your PowerShell workflow! Quickly locate, audit, and analyze all your functions, parameters, and variables—by name or data type—across any number of scripts. Now with call graph generation to visualize function dependencies and relationships. Perfect for code navigation, refactoring, automation, and documentation.
 
 # Installation
 
@@ -177,3 +177,66 @@ Returns an array of PSObjects with:
 - Symbol name matching is case-insensitive and supports partial matches.
 - Data type matching is substring-based (e.g., `string` matches `[string]`, `System.String`, etc).
 - Supports wildcards, recursion, and pipeline input for files.
+
+# PowerShellAstSearch: Call Graph Generation
+
+## What is this?
+
+`New-PowerShellCallGraph` and `Convert-PowerShellCallGraphToMermaid` are PowerShell functions that analyze PowerShell scripts to generate call graphs and convert them to Mermaid flowchart syntax for visualization.
+
+## Why use it?
+
+- **Visualize dependencies:** See how functions call each other in your PowerShell scripts
+- **Understand code flow:** Identify the call hierarchy and relationships between functions
+- **Documentation:** Generate visual diagrams for code documentation
+- **Debugging:** Trace function call paths to identify issues
+
+## Example Usage
+
+### Generate a Call Graph
+
+```powershell
+# Find all symbols in your PowerShell files
+$results = Find-PowerShellSymbol -Path .\Samples\Multiple-Functions.ps1
+
+# Create the call graph
+$graph = $results | New-PowerShellCallGraph
+
+# Convert to Mermaid syntax
+$mermaid = $graph | Convert-PowerShellCallGraphToMermaid
+$mermaid
+```
+
+This generates a Mermaid flowchart like:
+
+```
+flowchart TD
+    Get-Customer[Get-Customer]
+    Get-Order[Get-Order]
+    Get-Product[Get-Product]
+    Get-Shipping[Get-Shipping]
+    Get-Customer --> Get-Content
+    Get-Customer --> ConvertFrom-Json
+    Get-Order --> Get-Product
+    Get-Product --> Get-Content
+    Get-Shipping --> Get-Customer
+    Get-Shipping --> Get-Order
+```
+
+### Filter the Graph
+
+```powershell
+# Exclude specific functions
+$graph | Convert-PowerShellCallGraphToMermaid -ExcludeFunctions 'Get-Content', 'ConvertFrom-Json'
+
+# Include only specific functions
+$graph | Convert-PowerShellCallGraphToMermaid -IncludeOnly 'Get-Customer', 'Get-Order', 'Get-Shipping'
+```
+
+## Output
+
+`New-PowerShellCallGraph` returns a PSObject with:
+- `Nodes`: Array of unique function names
+- `Edges`: Array of PSCustomObjects with Caller, Callee, File, and Line properties
+
+`Convert-PowerShellCallGraphToMermaid` returns a string containing the Mermaid flowchart syntax.
