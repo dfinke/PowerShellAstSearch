@@ -3,7 +3,7 @@
     RootModule        = 'PowerShellAstSearch.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.1.2'
+    ModuleVersion     = '0.1.3'
 
     # ID used to uniquely identify this module
     GUID              = 'b1e2e2e2-0000-4000-8000-000000000001'
@@ -26,6 +26,7 @@
     # Functions to export from this module
     FunctionsToExport = @(
         'Find-PowerShellSymbol'
+        'New-PowerShellCallGraph'
     )
 
     # Cmdlets to export from this module
