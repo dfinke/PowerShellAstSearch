@@ -1,5 +1,17 @@
 # PowerShell AST Search - Changelog
 
+## v0.1.4
+
+### Added
+- **Search-Symbol Function**: New AI-Optimized wrapper for `Find-PowerShellSymbol` that simplifies symbol searching with a single array parameter for search types.
+  - Supports searching by symbol name or listing all symbols of specified types (Function, Variable, Parameter, Argument).
+  - Easier API for automation and AI tools compared to multiple boolean switches.
+  - Maintains full compatibility with existing `Find-PowerShellSymbol` functionality.
+
+### Enhanced
+- **Module Exports**: Updated module manifest to export the new `Search-Symbol` function alongside existing functions.
+- **Documentation**: Added comprehensive README section with examples and parameter descriptions for `Search-Symbol`.
+
 ## v0.1.3
 
 ### Added

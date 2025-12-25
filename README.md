@@ -178,6 +178,51 @@ Returns an array of PSObjects with:
 - Data type matching is substring-based (e.g., `string` matches `[string]`, `System.String`, etc).
 - Supports wildcards, recursion, and pipeline input for files.
 
+# PowerShellAstSearch: Search-Symbol
+
+## What is this?
+
+`Search-Symbol` is an AI-friendly wrapper for `Find-PowerShellSymbol`, designed to simplify symbol searching with a single array parameter for search types instead of multiple boolean switches.
+
+## Why use it?
+
+- Easier for automation and AI tools to use due to simplified parameter structure.
+- Same functionality as Find-PowerShellSymbol but with a clearer API for programmatic use.
+
+## Example Usage
+
+Search for any symbol named "id" (all types):
+```powershell
+Search-Symbol -Name "id"
+```
+
+Search for "id" as variable only:
+```powershell
+Search-Symbol -Name "id" -SearchTypes @('Variable')
+```
+
+Search for "ComputerName" as both parameter and variable:
+```powershell
+Search-Symbol -Name "ComputerName" -SearchTypes @('Parameter', 'Variable')
+```
+
+Search in specific directory:
+```powershell
+Search-Symbol -Name "Get-MyFunc" -SearchTypes @('Function') -SearchPath "C:\Scripts"
+```
+
+Show all functions defined:
+```powershell
+Search-Symbol -SearchTypes @('Function')
+```
+
+## Parameters
+
+- **Name** (optional, string): The symbol name to find. If not specified, searches all symbols of the specified types.
+- **SearchTypes** (optional, string[]): Types to search for. Valid values: Function, Variable, Parameter, Argument. If omitted, searches all types.
+- **SearchPath** (optional, string): Directory to search. Default: current directory
+- **DataType** (optional, string): Filter by data type
+
 # PowerShellAstSearch: Call Graph Generation
 
 ## What is this?
