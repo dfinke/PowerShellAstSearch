@@ -1,7 +1,7 @@
 function Search-Symbol {
     <#
     .SYNOPSIS
-    AI-friendly wrapper for Find-PowerShellSymbol
+    AI-Optimized wrapper for Find-PowerShellSymbol
     
     .PARAMETER Name
     The symbol name to find. If not specified, searches all symbols of the specified types.
