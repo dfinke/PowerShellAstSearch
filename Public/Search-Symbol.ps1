@@ -10,6 +10,12 @@ function Search-Symbol {
     Array of types to search. Can include: Function, Variable, Parameter, Argument
     If empty or not specified, searches all types.
     
+    .PARAMETER AsJson
+    Output results as JSON instead of PowerShell objects.
+    
+    .PARAMETER CompressJson
+    When used with AsJson, outputs compact JSON without whitespace. Requires AsJson to be specified.
+    
     .EXAMPLE
     Search-Symbol -Name "myVar" -SearchTypes @('Variable')
     
@@ -26,6 +32,14 @@ function Search-Symbol {
     .EXAMPLE
     Search-Symbol -SearchTypes @('Function')
     Shows all functions defined
+    
+    .EXAMPLE
+    Search-Symbol -Name "myVar" -AsJson
+    Searches for 'myVar' and outputs results as JSON
+    
+    .EXAMPLE
+    Search-Symbol -Name "myVar" -AsJson -CompressJson
+    Searches for 'myVar' and outputs compact JSON
     #>
     param(
         [string]$Name,
@@ -35,7 +49,11 @@ function Search-Symbol {
         
         [string]$SearchPath = '.',
         
-        [string]$DataType
+        [string]$DataType,
+
+        [switch]$AsJson,
+
+        [switch]$CompressJson
     )
     
     $findParams = @{
@@ -48,6 +66,14 @@ function Search-Symbol {
     
     if ($DataType) { 
         $findParams.DataType = $DataType 
+    }
+    
+    if ($AsJson) {
+        $findParams.AsJson = $AsJson
+    }
+    
+    if ($CompressJson) {
+        $findParams.CompressJson = $CompressJson
     }
     
     # If SearchTypes specified, map to switches

@@ -17,11 +17,26 @@ function Find-PowerShellSymbol {
     Search only for parameters (definitions/usages).
 .PARAMETER ArgumentsOnly
     Search only for command arguments (e.g., -Name in Get-Process -Name 'foo').
+
+.PARAMETER DataType
+    Filter results by data type (for variables and parameters).
+
+.PARAMETER AsJson
+    Output results as JSON instead of PowerShell objects.
+
+.PARAMETER CompressJson
+    When used with AsJson, outputs compact JSON without whitespace. Requires AsJson to be specified.
 .EXAMPLE
     Find-PowerShellSymbol -SymbolName 'Get-Data' -Path .\*.ps1 -FunctionsOnly
     Find-PowerShellSymbol -SymbolName 'foo' -Path .\*.ps1 -VarsOnly
     dir .\src -Recurse -Filter *.ps1 | Find-PowerShellSymbol -SymbolName 'bar' -ParamsOnly
     Find-PowerShellSymbol -SymbolName 'id' -Path .\*.ps1 -ArgumentsOnly  # Finds usages like Get-Data -id 3
+
+.EXAMPLE
+    Find-PowerShellSymbol -SymbolName 'foo' -Path .\*.ps1 -AsJson  # Outputs results as JSON
+
+.EXAMPLE
+    Find-PowerShellSymbol -SymbolName 'foo' -Path .\*.ps1 -AsJson -CompressJson  # Outputs compact JSON
 #>
     [CmdletBinding()]
     param(
@@ -45,7 +60,13 @@ function Find-PowerShellSymbol {
         [switch]$ArgumentsOnly,
 
         [Parameter()]
-        [string]$DataType
+        [string]$DataType,
+
+        [Parameter()]
+        [switch]$AsJson,
+
+        [Parameter()]
+        [switch]$CompressJson
     )
 
     begin {
@@ -234,6 +255,16 @@ function Find-PowerShellSymbol {
     }
 
     end {
-        $results
+        if ($AsJson) {
+            if ($CompressJson) {
+                $results | ConvertTo-Json -Compress
+            }
+            else {
+                $results | ConvertTo-Json
+            }
+        }
+        else {
+            $results
+        }
     }
 }

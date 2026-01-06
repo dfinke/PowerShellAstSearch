@@ -1,5 +1,22 @@
 # PowerShell AST Search - Changelog
 
+## v0.1.5
+
+### Added
+- **AsJson Parameter**: Added `-AsJson` switch to both `Find-PowerShellSymbol` and `Search-Symbol` functions for JSON output.
+  - Returns results in JSON format instead of PowerShell objects.
+  - Useful for integration with CI/CD pipelines, code analysis tools, and external data processing.
+  - DRY implementation: core logic in `Find-PowerShellSymbol`, inherited by `Search-Symbol` wrapper.
+
+- **CompressJson Parameter**: Added `-CompressJson` switch to both functions for compact JSON output.
+  - When used with `-AsJson`, outputs minified JSON without whitespace.
+  - Ideal for logging, storage, or transmission where size matters.
+  - Requires `-AsJson` to be specified.
+
+### Enhanced
+- **Documentation**: Updated README with JSON output examples for both functions.
+- **API Consistency**: Both core and wrapper functions now support the same output format options.
+
 ## v0.1.4
 
 ### Added
