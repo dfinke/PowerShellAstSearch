@@ -160,6 +160,20 @@ dir .\Samples\ | Find-PowerShellSymbol -DataType object
 ```
 Perfect for large-scale refactoring or code analysis.
 
+#### 12. JSON Output
+Get results in JSON format for integration with other tools:
+```powershell
+Find-PowerShellSymbol -SymbolName 'Get-Data' -Path .\Samples\Sample3.ps1 -AsJson
+```
+Useful for CI/CD pipelines, code analysis tools, or data processing.
+
+#### 13. Compact JSON Output
+Get results in compact JSON format for minimal size:
+```powershell
+Find-PowerShellSymbol -SymbolName 'Get-Data' -Path .\Samples\Sample3.ps1 -AsJson -CompressJson
+```
+Ideal for logging, storage, or transmission where size matters.
+
 ## Output
 Returns an array of PSObjects with:
 - `File`: File path
@@ -216,12 +230,24 @@ Show all functions defined:
 Search-Symbol -SearchTypes @('Function')
 ```
 
+Get results as JSON:
+```powershell
+Search-Symbol -Name "myVar" -SearchTypes @('Variable') -AsJson
+```
+
+Get results as compact JSON:
+```powershell
+Search-Symbol -Name "myVar" -SearchTypes @('Variable') -AsJson -CompressJson
+```
+
 ## Parameters
 
 - **Name** (optional, string): The symbol name to find. If not specified, searches all symbols of the specified types.
 - **SearchTypes** (optional, string[]): Types to search for. Valid values: Function, Variable, Parameter, Argument. If omitted, searches all types.
 - **SearchPath** (optional, string): Directory to search. Default: current directory
 - **DataType** (optional, string): Filter by data type
+- **AsJson** (optional, switch): Output results as JSON instead of PowerShell objects
+- **CompressJson** (optional, switch): When used with AsJson, outputs compact JSON without whitespace
 
 # PowerShellAstSearch: Call Graph Generation
 
